@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 void send_command(int socket, char* command) {
     send(socket, command, strlen(command), 0);
@@ -27,7 +28,6 @@ void command_loop(int socket) {
         if (strlen(command) == 0) {
             continue;
         }
-
         send_command(socket, command);
 
         if (strcmp(command, "exit") == 0) {
@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
     struct sockaddr_in server_address;
     memset(&server_address, 0, sizeof(server_address));
     server_address.sin_family = AF_INET;
+    server_address.sin_addr.s_addr = inet_addr(host);
     server_address.sin_port = htons(port);
 
     printf("connecting to server %s: %d\n", host, port);
