@@ -4,4 +4,9 @@ project(termin_all C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(termin_all server.c
-        client.c)
+        client.c
+        commands.c
+        commands.h
+        accounts.c
+        accounts.h
+)
