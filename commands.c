@@ -34,14 +34,6 @@ void handle_setprofile(int client_fd, char* parameters) {
     send(client_fd, "setprofile\n", 11, 0);
 }
 
-void handle_post(int client_fd, char* parameters) {
-    send(client_fd, "post\n", 6, 0);
-}
-
-void handle_viewposts(int client_fd, char* parameters) {
-    send(client_fd, "viewposts\n", 12, 0);
-}
-
 void handle_exit(int client_fd, char* parameters) {
     send(client_fd, "exiting...\n", 11, 0);
 }
