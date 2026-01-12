@@ -98,9 +98,13 @@ int check_view_permission(const char* viewer, const char* poster, int post_permi
 }
 
 void handle_viewposts(int client_fd, char* parameters) {
-    char error_message[100];
+    char error_message[100], target_user[16];
     const char* viewer = get_session_username(client_fd);
     int is_logged_in = (viewer != NULL);
+
+    if (parameters != NULL) {
+        sscanf(parameters, "%15s", target_user);
+    }
 
     FILE* file = fopen("database/posts.txt", "r");
     if (file == NULL) {
@@ -128,6 +132,10 @@ void handle_viewposts(int client_fd, char* parameters) {
             permission = strtol(token3,NULL,10);
             strcpy(timestamp, token4);
 
+            if (strlen(target_user) > 0 && strcmp(poster, target_user) != 0) {
+                continue;
+            }
+
             int can_view = 0;
             if (!is_logged_in) {
                 if (permission == 0) can_view = 1;
@@ -136,7 +144,7 @@ void handle_viewposts(int client_fd, char* parameters) {
                 can_view = check_view_permission(viewer, poster, permission);
             }
 
-            if (can_view){
+            if (can_view) {
                 char post_entry[500];
                 sprintf(post_entry, "\n[%s] %s:\n%s\n", timestamp, poster, content);
 
