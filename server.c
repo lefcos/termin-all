@@ -5,7 +5,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "commands.h"
-//#include "accounts.h"
+#include "accounts.h"
+#include "connections.h"
+#include "sessions.h"
 
 //**command table**
 typedef void (*commandHandler)(int client_fd, char* parameters);
@@ -21,13 +23,15 @@ commandEntry commandTable[] = {
     {"login", handle_login},
     {"signup", handle_signup},
     {"logout", handle_logout},
+    {"add_friend", handle_addfriend},
+    {"remove_friend", handle_removefriend},
+    {"exit", handle_exit},
 
     {"viewprofile", handle_viewprofile},
     {"setprofile", handle_setprofile},
-    {"addfriend", handle_addfriend},
     {"post", handle_post},
     {"viewposts", handle_viewposts},
-    { "exit", handle_exit},
+
     {NULL, handle_unknown}
 };
 
@@ -53,6 +57,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    start_sessions();
     int port = atoi(argv[1]);
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket < 0) {
@@ -103,7 +108,9 @@ int main(int argc, char* argv[]) {
 
             if (client_socket >= 0) {
                 FD_SET(client_socket, &active_fds);
-                if (client_socket > max_fd) max_fd = client_socket;
+                if (client_socket > max_fd)
+                    max_fd = client_socket;
+                create_client_session(client_socket);
                 printf("Server: Client connected! fd = %d\n", client_socket);
             }
         }
@@ -117,8 +124,18 @@ int main(int argc, char* argv[]) {
                 memset(buffer, 0, sizeof(buffer));
                 int bytes = recv(i, buffer, sizeof(buffer), 0);
 
-                if (bytes == 0) {
+                if (bytes <= 0) {
+                    const char* username = get_session_username(i);
+                    if (username != NULL) {
+                        char usernamecopy[16];
+                        strncpy(usernamecopy, username, 15);
+                        usernamecopy[15] = '\0';
+
+                        extern void change_user_status(const char* username, int status);
+                        change_user_status(usernamecopy, 0);
+                    }
                     printf("Server: Client disconnected. fd = %d\n", i);
+                    end_client_session(i);
                     close(i);
                     FD_CLR(i, &active_fds);
                 } else {

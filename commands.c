@@ -34,10 +34,6 @@ void handle_setprofile(int client_fd, char* parameters) {
     send(client_fd, "setprofile\n", 11, 0);
 }
 
-void handle_addfriend(int client_fd, char* parameters) {
-    send(client_fd, "addfriend\n", 10, 0);
-}
-
 void handle_post(int client_fd, char* parameters) {
     send(client_fd, "post\n", 6, 0);
 }
