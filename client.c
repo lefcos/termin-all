@@ -17,7 +17,7 @@ int catch_response(int socket, char* buffer, int buffer_size) {
 }
 
 void command_loop(int socket) {
-    char command[256];
+    char command[1024];
     char response[256];
     while (1) {
         if (fgets(command, 1024, stdin) == NULL) {

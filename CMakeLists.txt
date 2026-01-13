@@ -15,4 +15,6 @@ add_executable(termin_all server.c
         sessions.h
         posts.c
         posts.h
+        message.c
+        message.h
 )

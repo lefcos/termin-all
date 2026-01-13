@@ -24,7 +24,7 @@ int get_post_content(const char* input, char* content, char* restriction) {
     content[length] = '\0';
 
     end++;
-    while (*end == '"') end++;
+    while (*end == '"' || *end == ' ') end++;
     strcpy(restriction, end);
     return 1;
 }

@@ -8,6 +8,7 @@
 #include "accounts.h"
 #include "connections.h"
 #include "sessions.h"
+#include "message.h"
 
 //**command table**
 typedef void (*commandHandler)(int client_fd, char* parameters);
@@ -26,12 +27,11 @@ commandEntry commandTable[] = {
     {"add_friend", handle_addfriend},
     {"remove_friend", handle_removefriend},
     {"exit", handle_exit},
+    {"message", handle_send_message},
+    {"inbox", handle_inbox},
 
     {"viewprofile", handle_viewprofile},
     {"setprofile", handle_setprofile},
-    {"post", handle_post},
-    {"viewposts", handle_viewposts},
-
     {NULL, handle_unknown}
 };
 
