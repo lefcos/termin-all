@@ -1,5 +1,10 @@
 #ifndef TERMIN_ALL_CONNECTIONS_H
 #define TERMIN_ALL_CONNECTIONS_H
+#include <stdio.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/file.h>
+#include "sessions.h"
 
 extern int username_exists(const char *username);
 int connection_exists(const char *username1, const char *username2);

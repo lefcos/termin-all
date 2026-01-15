@@ -9,6 +9,7 @@
 #include "connections.h"
 #include "sessions.h"
 #include "message.h"
+#include "posts.h"
 
 //**command table**
 typedef void (*commandHandler)(int client_fd, char* parameters);
@@ -29,9 +30,10 @@ commandEntry commandTable[] = {
     {"exit", handle_exit},
     {"message", handle_send_message},
     {"inbox", handle_inbox},
+    {"post", handle_post},
+    {"view_posts", handle_viewposts},
+    {"delete_post", handle_delete_post},
 
-    {"viewprofile", handle_viewprofile},
-    {"setprofile", handle_setprofile},
     {NULL, handle_unknown}
 };
 
@@ -117,7 +119,7 @@ int main(int argc, char* argv[]) {
 
         for (int i = 0; i <= max_fd; i++) {
             if (i != server_socket && FD_ISSET(i, &read_fds)) {
-                char buffer[1024];
+                char buffer[4000];
                 char command[1024];
                 char parameters[1024];
 

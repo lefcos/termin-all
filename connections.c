@@ -1,9 +1,4 @@
 #include "connections.h"
-#include <stdio.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/file.h>
-#include "sessions.h"
 
 int connection_exists(const char *username1, const char *username2) {
     FILE* file = fopen("database/connections.txt", "r");
@@ -17,7 +12,7 @@ int connection_exists(const char *username1, const char *username2) {
         char entered_username2[16];
 
         sscanf(line, "%[^/]/%[^/]", entered_username1, entered_username2);
-        if (strcmp(username1, entered_username1) == 0 || strcmp(username2, entered_username2) == 0) {
+        if (strcmp(username1, entered_username1) == 0 && strcmp(username2, entered_username2) == 0) {
             fclose(file);
             return 1;
         }
@@ -58,7 +53,7 @@ void handle_addfriend(int client_fd, char* parameters) {
     int parsed = sscanf(parameters, "%s %d", connection_username, &level);
 
     if (user == NULL) {
-        strcpy(error_message, "Error: you must be logged in.");
+        strcpy(error_message, "Error: you must be logged in.\n");
         send(client_fd, error_message, strlen(error_message), 0);
         return;
     }
@@ -99,9 +94,12 @@ void handle_addfriend(int client_fd, char* parameters) {
     flock(fd, LOCK_UN);
     fclose(file);
 
-
     char response[256];
-    sprintf(response, "Success: %s added as %d!\n", connection_username, level);
+    char level_name[20];
+    if (level == 1) strcpy(level_name, "connection");
+    else if (level == 2)strcpy(level_name, "friend");
+    else strcpy(level_name, "good friend");
+    sprintf(response, "Success: %s added as a %s!\n", connection_username, level_name);
     send(client_fd, response, strlen(response), 0);
 }
 
@@ -160,7 +158,7 @@ void handle_removefriend(int client_fd, char* parameters) {
         int fd = fileno(file);
         flock(fd, LOCK_EX);
         for (int i = 0; i < line_cnt; i++) {
-            fprintf(file, "%s\n", lines[i]);
+            fprintf(file, "%s", lines[i]);
         }
         flock(fd, LOCK_UN);
         fclose(file);

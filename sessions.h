@@ -1,5 +1,7 @@
 #ifndef TERMIN_ALL_SESSIONS_H
 #define TERMIN_ALL_SESSIONS_H
+#include <stdio.h>
+#include <string.h>
 
 void start_sessions();
 void create_client_session(int socket_fd);

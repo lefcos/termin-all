@@ -18,7 +18,7 @@ int catch_response(int socket, char* buffer, int buffer_size) {
 
 void command_loop(int socket) {
     char command[1024];
-    char response[256];
+    char response[4000];
     while (1) {
         if (fgets(command, 1024, stdin) == NULL) {
             break;
@@ -31,11 +31,11 @@ void command_loop(int socket) {
         send_command(socket, command);
 
         if (strcmp(command, "exit") == 0) {
-            catch_response(socket, response, 1024);
+            catch_response(socket, response, 4000);
             printf("%s", response);
             break;
         }
-        int bytes = catch_response(socket, response, 1024);
+        int bytes = catch_response(socket, response, 4000);
         if (bytes < 0) {
             printf("disconnected");
             break;
@@ -68,16 +68,15 @@ int main(int argc, char* argv[]) {
     server_address.sin_addr.s_addr = inet_addr(host);
     server_address.sin_port = htons(port);
 
-    printf("connecting to server %s: %d\n", host, port);
     if (connect(sock, (struct sockaddr*) &server_address, sizeof(server_address)) < 0) {
         perror("ERROR connecting");
         close(sock);
         return 1;
     }
 
-    printf("connected to server %s:%d!\n", host, port);
+    printf("Successfully connected to termin-all server %s! Try help to look around.\n", host);
     command_loop(sock);
     close(sock);
-    printf("disconnected from server\n");
+    printf("Diconnected from server. You'll be back.\n");
     return 0;
 }

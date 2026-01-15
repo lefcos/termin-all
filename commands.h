@@ -1,6 +1,10 @@
 #ifndef TERMIN_ALL_CLASSES_H
 #define TERMIN_ALL_CLASSES_H
 #include "accounts.h"
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
 
 void handle_ping(int client_fd, char* parameters);
 void handle_help(int client_fd, char* parameters);
